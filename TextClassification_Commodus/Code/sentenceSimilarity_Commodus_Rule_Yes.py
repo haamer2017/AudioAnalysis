@@ -38,7 +38,6 @@ def sentence_similarity(sentence1, sentence2):
     sentence2 = pos_tag(word_tokenize(sentence2))
     
 
-
     # Get the synsets for the tagged words
     synsets1 = [tagged_to_synset(*tagged_word) for tagged_word in sentence1]
     synsets2 = [tagged_to_synset(*tagged_word) for tagged_word in sentence2]
@@ -47,7 +46,6 @@ def sentence_similarity(sentence1, sentence2):
     # Filter out the Nones
     synsets1 = [ss for ss in synsets1 if ss]
     synsets2 = [ss for ss in synsets2 if ss]
-
  
     score, count = 0.0, 0
  
@@ -79,17 +77,16 @@ def sentence_similarity(sentence1, sentence2):
     return score
 
 
-focus_sentence = "cool off the contract within 10 business days of receiving the welcome pack"
+focus_sentence = "do you confirm you are over 18, authorised to enter into this agreement, and understand and accept the terms and conditions of this offer, these are also on Powershop’s website.  Please respond with yes or no"
 rule = "Rule_Yes"
-
-
+flag=0
 
 os.chdir("G:\\NLP\\Commodus\\Test\\")   
 fileList=glob.glob("*.txt")
 
 with open("G:\Git_code\AudioAnalysis\TextClassification_Commodus\Output\Test.csv", 'w', newline='',encoding = 'utf-8') as outfile1:
     writer1 = csv.writer(outfile1)
-    writer1.writerow(["ID","Rule","Sentence", "Score"])
+    writer1.writerow(["ID","Rule","Sentence", "Next Sentence","Score"])
 
     for fl in fileList:
         print(fl)
@@ -99,11 +96,17 @@ with open("G:\Git_code\AudioAnalysis\TextClassification_Commodus\Output\Test.csv
             sentences = line.split(".")
             for sentence in sentences:
                 if sentence.strip():
-                    #print(sentence)      
+                    #print(flag, sentence)
+                    if (flag == 1 and (sentence == "Yes" or "Yeah" or "Yup")):
+                        #print (previous, " AND ", sentence)
+                        writer1.writerow([fl,rule,previous,sentence,score])
+                        flag=0
                     score=(sentence_similarity(focus_sentence, sentence))
-                    if(score>0.5):
+                    if(score>0.5 and rule=="Rule_Yes"):
+                        line ==" Yes"
                         print ("Similarity(\"%s\", \"%s\") = %s in Document : %s" % (focus_sentence, sentence, sentence_similarity(focus_sentence, sentence),fl))
-                        writer1.writerow([fl,rule,sentence,score])
+                        previous = sentence
+                        flag =1
                         results.append(score)        #print(max(results))            
  
 
