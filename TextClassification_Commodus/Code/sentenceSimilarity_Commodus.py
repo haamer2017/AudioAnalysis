@@ -1,5 +1,10 @@
 from nltk import word_tokenize, pos_tag
 from nltk.corpus import wordnet as wn
+import time
+from reportlab.lib.enums import TA_JUSTIFY
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
 import os
 import glob
 import csv
@@ -78,18 +83,24 @@ def sentence_similarity(sentence1, sentence2):
     score /= count
     return score
 
+###preparing pdfs
+doc = SimpleDocTemplate("form_letter.pdf",
+                        rightMargin=72,leftMargin=72,
+                        topMargin=72,bottomMargin=18)
+Story=[]
 
-focus_sentence = "cool off the contract within 10 business days of receiving the welcome pack"
-rule = "Rule_Yes"
 
 
+focus_sentence = "a credit check will be performed"
+rule = "Rule_CreditCheck"
 
-os.chdir("G:\\NLP\\Commodus\\Test\\")   
+os.chdir("G:\\NLP\\Commodus\\Test\\Test_ChrisP_data\\")
+#os.chdir("G:\\NLP\\Commodus\\Test\\") 
 fileList=glob.glob("*.txt")
 
-with open("G:\Git_code\AudioAnalysis\TextClassification_Commodus\Output\Test.csv", 'w', newline='',encoding = 'utf-8') as outfile1:
+with open("G:\Git_code\AudioAnalysis\TextClassification_Commodus\Output\Test_ChrisP_data_creditCheck_60.csv", 'w', newline='',encoding = 'utf-8') as outfile1:
     writer1 = csv.writer(outfile1)
-    writer1.writerow(["ID","Rule","Sentence", "Score"])
+    writer1.writerow(["Document ID","Rule","Sentence", "Score"])
 
     for fl in fileList:
         print(fl)
@@ -101,9 +112,9 @@ with open("G:\Git_code\AudioAnalysis\TextClassification_Commodus\Output\Test.csv
                 if sentence.strip():
                     #print(sentence)      
                     score=(sentence_similarity(focus_sentence, sentence))
-                    if(score>0.5):
-                        print ("Similarity(\"%s\", \"%s\") = %s in Document : %s" % (focus_sentence, sentence, sentence_similarity(focus_sentence, sentence),fl))
-                        writer1.writerow([fl,rule,sentence,score])
+                    if(score>0.6):
+                        print ("Similarity(\"%s\", \"%s\") = %s in Document : %s" % (focus_sentence.strip(), sentence.strip(), sentence_similarity(focus_sentence, sentence),fl))
+                        writer1.writerow([fl[:-19],rule,sentence.strip(),score])
                         results.append(score)        #print(max(results))            
  
 

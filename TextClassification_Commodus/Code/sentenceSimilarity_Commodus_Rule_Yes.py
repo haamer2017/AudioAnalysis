@@ -3,6 +3,7 @@ from nltk.corpus import wordnet as wn
 import os
 import glob
 import csv
+import time
 
 ##http://nlpforhackers.io/wordnet-sentence-similarity/
 
@@ -81,7 +82,7 @@ focus_sentence = "do you confirm you are over 18, authorised to enter into this 
 rule = "Rule_Yes"
 flag=0
 
-os.chdir("G:\\NLP\\Commodus\\Test\\")   
+os.chdir("G:\\NLP\\Commodus\\Test\\Test_small\\")
 fileList=glob.glob("*.txt")
 
 with open("G:\Git_code\AudioAnalysis\TextClassification_Commodus\Output\Test.csv", 'w', newline='',encoding = 'utf-8') as outfile1:
@@ -97,14 +98,15 @@ with open("G:\Git_code\AudioAnalysis\TextClassification_Commodus\Output\Test.csv
             for sentence in sentences:
                 if sentence.strip():
                     #print(flag, sentence)
+                    #if (flag == 1 and (sentence == "Yes" or "Yeah" or "Yup")):
                     if (flag == 1 and (sentence == "Yes" or "Yeah" or "Yup")):
-                        #print (previous, " AND ", sentence)
-                        writer1.writerow([fl,rule,previous,sentence,score])
+                        print (previous, " AND next sentence --> ", sentence)
+                        #writer1.writerow([fl,rule,previous,sentence,score])
+                        #time.sleep(10)
                         flag=0
                     score=(sentence_similarity(focus_sentence, sentence))
                     if(score>0.5 and rule=="Rule_Yes"):
-                        line ==" Yes"
-                        print ("Similarity(\"%s\", \"%s\") = %s in Document : %s" % (focus_sentence, sentence, sentence_similarity(focus_sentence, sentence),fl))
+                        #print ("Similarity(\"%s\", \"%s\") = %s in Document : %s" % (focus_sentence, sentence, sentence_similarity(focus_sentence, sentence),fl))
                         previous = sentence
                         flag =1
                         results.append(score)        #print(max(results))            
